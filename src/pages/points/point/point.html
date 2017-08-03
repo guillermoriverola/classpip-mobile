@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>{{ point.name }}</ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content *ngIf="myRole == role.TEACHER">
+  <ion-row class="logo-row">
+    <ion-col></ion-col>
+    <ion-col width-67>
+      <img [src]="point.image" width="200px" height="200px" />
+    </ion-col>
+    <ion-col></ion-col>
+  </ion-row>
+  <button ion-button class="buttonright" ion-button (click)="enableEditPoint(point)">Editar Punto</button>
+  <ion-list>
+    <ion-item>
+      <ion-label color="primary" fixed>{{ 'POINT.NAME' | translate }}</ion-label>                
+      <ion-input class="alignme" [disabled]="isDisabled" type="text" placeholder="{{ point.name }}" name="name" required></ion-input>      
+    </ion-item>
+    <ion-item>
+      <ion-label color="primary" fixed>{{ 'POINT.VALUE' | translate }}</ion-label>       
+      <ion-input class="alignme" [disabled]="isDisabled" type="value" placeholder="{{ point.value }}" name="value" required></ion-input>      
+    </ion-item>
+    <button *ngIf="isDisabled == false" ion-button (click)="editPoint()">Aceptar</button>     
+  </ion-list>
+</ion-content>

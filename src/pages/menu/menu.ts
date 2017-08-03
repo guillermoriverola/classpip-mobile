@@ -6,6 +6,7 @@ import { IonicService } from '../../providers/ionic.service';
 import { UtilsService } from '../../providers/utils.service';
 import { LoginService } from '../../providers/login.service';
 import { SchoolService } from '../../providers/school.service';
+import { PointService } from '../../providers/point.service';
 import { RoleSelectPage } from '../../pages/role-select/role-select';
 import { HomePage } from '../../pages/home/home';
 import { SchoolPage } from '../../pages/school/school';
@@ -23,19 +24,21 @@ export class MenuPage {
 
   public rootPage: Component;
   public homePage: Page;
-  public schoolPage: Page;
+  public schoolPage: Page;  
 
   constructor(
     public navController: NavController,
     public translateService: TranslateService,
     public utilsService: UtilsService,
     public ionicService: IonicService,
-    public schoolService: SchoolService,
+    public schoolService: SchoolService,    
     private loginService: LoginService) {
 
     this.rootPage = HomePage;
     this.homePage = new Page(HomePage, this.translateService.instant('HOME.TITLE'));
     this.schoolPage = new Page(SchoolPage, this.translateService.instant('SCHOOL.TITLE'));
+    
+    
   }
   /**
    * Method for opening a page
@@ -60,7 +63,7 @@ export class MenuPage {
   public showProfile(): void {
     this.navController.push(ProfilePage);
   }
-
+  
   /**
    * Method called from the home page to open the details of the
    * school of the current user

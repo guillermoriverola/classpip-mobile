@@ -8,9 +8,11 @@ import { GradeService } from './grade.service';
 import { MatterService } from './matter.service';
 import { AppConfig } from '../app/app.config';
 import { Group } from '../model/group';
+import { PointRelation } from '../model/pointRelation';
 import { Grade } from '../model/grade';
 import { Matter } from '../model/matter';
 import { Student } from '../model/student';
+
 
 @Injectable()
 export class GroupService {
@@ -53,6 +55,7 @@ export class GroupService {
       )
     });
   }
+    
 
   /**
    * Returns the list of students by a group id.
@@ -83,7 +86,7 @@ export class GroupService {
 
   /**
    * Returns the list of students by a group id.
-   * @return {Array<Stuent>} returns the list of students
+   * @return {Array<Student>} returns the list of students
    */
   private getGroupStudents(id: string): Observable<Array<Student>> {
 

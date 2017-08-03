@@ -1,6 +1,7 @@
 import { ComponentFixture, async } from '@angular/core/testing';
 import { TestUtils } from '../../test';
 import { RoleSelectPage } from './role-select';
+import {} from 'jasmine';
 
 let fixture: ComponentFixture<RoleSelectPage> = null;
 /* tslint:disable */

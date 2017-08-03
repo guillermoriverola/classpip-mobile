@@ -45,4 +45,5 @@ export class PopoverPage {
     this.viewController.dismiss()
       .then(value => this.navController.push(ProfilePage));
   }
+  
 }

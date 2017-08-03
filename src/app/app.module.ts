@@ -22,6 +22,8 @@ import { TeacherPage } from '../pages/teachers/teacher/teacher';
 import { StudentsPage } from '../pages/students/students';
 import { StudentPage } from '../pages/students/student/student';
 import { GroupPage } from '../pages/group/group';
+import { PointsPage } from '../pages/points/points';
+import { PointPage } from '../pages/points/point/point';
 
 // pipes
 import { OrderByIdPipe } from '../pipes/order-by-id.pipe';
@@ -39,6 +41,8 @@ import { MatterService } from '../providers/matter.service';
 import { SchoolService } from '../providers/school.service';
 import { UserService } from '../providers/user.service';
 import { UtilsService } from '../providers/utils.service';
+import { PointService } from '../providers/point.service';
+import { PointRelationService } from '../providers/pointRelation.service';
 
 // rxjs
 import 'rxjs/add/operator/map';
@@ -70,6 +74,8 @@ export function exportTranslateStaticLoader(http: Http) {
     StudentsPage,
     StudentPage,
     GroupPage,
+    PointsPage,
+    PointPage,
     // pipes
     OrderByIdPipe,
     OrderByNamePipe,
@@ -99,6 +105,8 @@ export function exportTranslateStaticLoader(http: Http) {
     TeacherPage,
     StudentsPage,
     StudentPage,
+    PointsPage,
+    PointPage,
     GroupPage
   ],
   providers: [
@@ -112,6 +120,8 @@ export function exportTranslateStaticLoader(http: Http) {
     SchoolService,
     UserService,
     UtilsService,
+    PointService,
+    PointRelationService
   ]
 })
 export class AppModule { }

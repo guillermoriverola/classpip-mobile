@@ -3,19 +3,26 @@ import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 import { UtilsService } from './utils.service';
+import { GradeService } from './grade.service';
+import { MatterService } from './matter.service';
 import { AppConfig } from '../app/app.config';
 import { School } from '../model/school';
 import { Role } from '../model/role';
 import { Avatar } from '../model/avatar';
 import { Teacher } from '../model/teacher';
 import { Student } from '../model/student';
+import { Point } from '../model/point';
+import { Grade } from '../model/grade';
+import { Matter } from '../model/matter';
 
 @Injectable()
 export class SchoolService {
 
   constructor(
     public http: Http,
-    public utilsService: UtilsService) { }
+    public utilsService: UtilsService,
+	public gradeService: GradeService,
+    public matterService: MatterService) { }
 
   /**
    * This method returns the current school of the logged
@@ -71,7 +78,7 @@ export class SchoolService {
   /**
    * This method returns the list of students in the school of the
    * current logged in user
-   * @return {Teachers} returns an array of teachers
+   * @return {Student} returns an array of students
    */
   public getMySchoolStudents(): Observable<Array<Student>> {
 
@@ -123,6 +130,61 @@ export class SchoolService {
     });
 
     var url: string = this.utilsService.getMySchoolUrl() + AppConfig.STUDENTS_URL + AppConfig.COUNT_URL;
+
+    return this.http.get(url, options)
+      .map((response: Response, index: number) => response.json().count)
+      .catch((error: Response) => this.utilsService.handleAPIError(error));
+  }
+
+  /**
+   * Returns the list of students by a group id.
+   * @return {Array<Point>} returns the list of points
+   */
+   public getMySchoolPoints(): Observable<Array<Point>> {     
+
+    let options: RequestOptions = new RequestOptions({
+      headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
+    });
+
+    var url: string = this.utilsService.getMySchoolUrl() + AppConfig.POINTS_URL;   
+
+    return this.http.get(url, options)
+      .map((response: Response, index: number) => Point.toObjectArray(response.json()))
+  }
+
+/**
+   * This method returns the list of students in the school of the
+   * current logged in user
+   * @return {Teachers} returns an array of teachers
+   */
+  
+  
+  private getPoints(): Observable<Array<Point>> {
+
+    let options: RequestOptions = new RequestOptions({
+      headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
+    });
+
+    var count: number = 0;
+    var url: string = this.utilsService.getMyUrl() + AppConfig.POINTS_URL;
+
+    return this.http.get(url, options)
+      .map((response: Response, index: number) => Point.toObjectArray(response.json()))
+  }
+  
+
+  /**
+   * This method returns the amount of teachers in the school of the
+   * current logged in user
+   * @return {Teachers} returns the number of teachers
+   */
+  public getMySchoolPointsCount(): Observable<number> {
+
+    let options: RequestOptions = new RequestOptions({
+      headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
+    });
+
+    var url: string = this.utilsService.getMySchoolUrl() + AppConfig.POINTS_URL + AppConfig.COUNT_URL;
 
     return this.http.get(url, options)
       .map((response: Response, index: number) => response.json().count)

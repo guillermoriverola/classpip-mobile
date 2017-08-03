@@ -6,17 +6,20 @@ import { TranslateService } from 'ng2-translate/ng2-translate';
 import { IonicService } from '../../providers/ionic.service';
 import { UtilsService } from '../../providers/utils.service';
 import { SchoolService } from '../../providers/school.service';
+import { PointService } from '../../providers/point.service';
 import { GroupService } from '../../providers/group.service';
 import { Role } from '../../model/role';
 import { Group } from '../../model/group';
 import { Teacher } from '../../model/teacher';
 import { Student } from '../../model/student';
 import { School } from '../../model/school';
+import { Point } from '../../model/point';
 import { SchoolPage } from '../../pages/school/school';
 import { PopoverPage } from '../../pages/home/popover/popover';
 import { TeachersPage } from '../../pages/teachers/teachers';
 import { StudentsPage } from '../../pages/students/students';
 import { GroupPage } from '../../pages/group/group';
+import { PointsPage } from '../../pages/points/points';
 
 @Component({
   selector: 'page-home',
@@ -27,6 +30,7 @@ export class HomePage {
   public school: School;
   public teachersCount: number;
   public studentsCount: number;
+  public pointsCount: number;
   public groups: Array<Group>;
 
   public myRole: Role;
@@ -37,6 +41,7 @@ export class HomePage {
     public utilsService: UtilsService,
     public groupService: GroupService,
     public schoolService: SchoolService,
+    public pointService: PointService,
     public platform: Platform,
     public translateService: TranslateService,
     public popoverController: PopoverController,
@@ -59,6 +64,13 @@ export class HomePage {
   }
 
   /**
+   * GetPointsPage
+   */
+  public getPoints(): void {    
+    this.navController.push(PointsPage)
+  }
+
+  /**
    * This method returns the school information from the
    * backend. This call is called on the constructor or the
    * refresh event
@@ -70,7 +82,10 @@ export class HomePage {
     // and the members
     if (this.myRole === Role.SCHOOLADMIN) {
 
-      this.schoolService.getMySchool().subscribe(
+      this.schoolService.getMySchool().finally(() => {
+		refresher ? refresher.complete() : null;
+		this.ionicService.removeLoading();
+		}).subscribe(
         ((value: School) => {
           this.school = value;
 
@@ -78,14 +93,17 @@ export class HomePage {
             ((value: number) => {
               this.teachersCount = value;
 
-              this.schoolService.getMySchoolStudentsCount().finally(() => {
-                refresher ? refresher.complete() : null;
-                this.ionicService.removeLoading();
-              }).subscribe(
-                ((value: number) => this.studentsCount = value),
-                error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
-            }),
-            error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
+			  this.schoolService.getMySchoolPointsCount().subscribe(
+				((value: number) => {
+				  this.pointsCount = value;
+				
+				this.schoolService.getMySchoolStudentsCount().subscribe(
+					((value: number) => this.studentsCount = value),
+					error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));                
+				}),
+				error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
+			}),
+			error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
         }),
         error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
 
@@ -97,12 +115,18 @@ export class HomePage {
       }).subscribe(
         ((value: School) => {
           this.school = value;
+		  
+		  this.schoolService.getMySchoolPointsCount().subscribe(
+				((value: number) => {
+				  this.pointsCount = value;
 
-          this.groupService.getMyGroups().subscribe(
-            ((value: Array<Group>) => this.groups = value),
-            error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
-        }),
-        error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
+			  this.groupService.getMyGroups().subscribe(
+				((value: Array<Group>) => this.groups = value),
+				error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
+			}),
+			error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
+		}),
+		error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
 
     } else if (this.myRole === Role.STUDENT) {
 
@@ -110,8 +134,14 @@ export class HomePage {
         refresher ? refresher.complete() : null;
         this.ionicService.removeLoading();
       }).subscribe(
-        ((value: School) => this.school = value),
-        error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
+        ((value: School) => {
+			this.school = value;
+		
+			this.groupService.getMyGroups().subscribe(
+				((value: Array<Group>) => this.groups = value),
+				error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
+		}),
+        error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));	  			
     }
   }
 
@@ -146,6 +176,23 @@ export class HomePage {
         this.ionicService.removeLoading();
       });
   }
+
+/**
+   * Method called from the home page to open the list of the
+   * points of the school of the current user
+   */
+  public goToPoints(): void {
+
+    this.ionicService.showLoading(this.translateService.instant('APP.WAIT'));
+
+    this.schoolService.getMySchoolPoints().subscribe(
+      ((value: Array<Point>) => this.navController.push(PointsPage, { points: value})),
+      error => {
+        this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error);
+        this.ionicService.removeLoading();
+      });
+  }
+  
 
   /**
   * Method called from the home page to open the list of the

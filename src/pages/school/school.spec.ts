@@ -1,6 +1,7 @@
 import { ComponentFixture, async } from '@angular/core/testing';
 import { TestUtils } from '../../test';
 import { SchoolPage } from './school';
+import {} from 'jasmine';
 
 let fixture: ComponentFixture<SchoolPage> = null;
 /* tslint:disable */

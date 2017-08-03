@@ -6,11 +6,61 @@
     <ion-title>{{ group.name }}</ion-title>
   </ion-navbar>
 </ion-header>
-<ion-content>
+<ion-content >
+  <button ion-button *ngIf="myRole == role.TEACHER" class="buttonright" ion-button (click)="getPoints()">Asignar Puntos</button>
+  <button ion-button *ngIf="myRole == role.STUDENT" class="buttonright" ion-button (click)="getPointsEstudent()">Ver mis Puntos</button>
+  <button ion-button *ngIf="myRole == role.STUDENT" class="buttonright" ion-button (click)="getPointsGroup()">Puntos del Grupo</button>
+  <button ion-button *ngIf="studentsPoint == true" class="buttonright" ion-button (click)="getNormal()">Esconder</button>
+  <ion-grid *ngIf="isDisabled == false">
+    <ion-row>
+      <ion-col col-1 *ngFor="let point of points" (click)="givePoint(point)">
+        <ion-item>
+          <ion-thumbnail item-left>
+            <img [src]="point.image">
+          </ion-thumbnail>          
+        </ion-item>
+        <h2>{{ point.name }}</h2>
+      </ion-col>
+    </ion-row>  
+  </ion-grid>
+  <ion-grid *ngIf="isDisabledStudent == false">
+    <ion-row>
+      <ion-col col-1 *ngFor="let point of points" (click)="selectPoint(point)">
+        <ion-item>
+          <ion-thumbnail item-left>
+            <img [src]="point.image">
+          </ion-thumbnail>          
+        </ion-item>
+        <h2>{{ point.name }}</h2>
+      </ion-col>
+    </ion-row>  
+  </ion-grid>
+  <ion-list *ngIf="pointDisabled == false">
+    <ion-item>
+      <ion-thumbnail item-left>
+        <img [src]="point.image">
+      </ion-thumbnail>
+      <h2>{{ point.name }}</h2>
+      <h3>{{ point.value }}</h3>      
+      <button ion-button clear item-right icon-only>
+        <ion-icon name="ios-arrow-forward"></ion-icon>
+      </button>
+    </ion-item>
+  </ion-list>
+  <ion-list *ngIf="studentsPoint == true">
+    <ion-item *ngFor="let pointRelation of pointRelations">     
+      <h2>Id del Punto: {{ pointRelation.pointId }}</h2>
+      <h3>Id del Estudiante: {{ pointRelation.studentId }}</h3>
+      <h3>Id de la Relación: {{ pointRelation.id }}</h3>
+      <button ion-button clear item-right icon-only>
+        <ion-icon name="ios-arrow-forward"></ion-icon>
+      </button>
+    </ion-item>
+  </ion-list>
   <ion-refresher (ionRefresh)="getStudents($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-  <ion-grid>
+  <ion-grid *ngIf="pointDisabled == true">
     <ion-row *ngFor="let row of grid">
       <ion-col width-33 *ngFor="let student of row">
         <ion-card *ngIf="student" no-margin>
@@ -20,6 +70,20 @@
             <p>{{student.surname}}</p>
           </ion-card-content>
         </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-grid *ngIf="pointDisabled == false">
+    <ion-row *ngFor="let row of grid">
+      <ion-col width-33 *ngFor="let student of row">
+        <ion-card *ngIf="student" no-margin>
+          <img [src]="student.avatar.image" />
+          <ion-card-content>
+            <ion-card-title no-padding no-margin>{{student.name}}</ion-card-title>
+            <p>{{student.surname}}</p>
+            <button ion-button class="buttonright" ion-button (click)="givePoints(student)">Dar Punto</button>
+          </ion-card-content>          
+        </ion-card>        
       </ion-col>
     </ion-row>
   </ion-grid>

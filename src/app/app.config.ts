@@ -1,8 +1,8 @@
 export class AppConfig {
 
   // Server connection
-  public static get SERVER_URL(): string { return 'https://api.classpip.com'; } // PRO
-  // public static get SERVER_URL(): string { return 'http://localhost:3000'; } // DEV
+  //public static get SERVER_URL(): string { return 'https://api.classpip.com'; } // PRO
+  public static get SERVER_URL(): string { return 'http://localhost:3000'; } // DEV
 
   public static get TEACHER_URL(): string { return this.SERVER_URL + '/api/teachers'; }
   public static get STUDENT_URL(): string { return this.SERVER_URL + '/api/students'; }
@@ -12,6 +12,8 @@ export class AppConfig {
   public static get MATTERS_URL(): string { return this.SERVER_URL + '/api/matters'; }
   public static get GRADES_URL(): string { return this.SERVER_URL + '/api/grades'; }
   public static get GROUP_URL(): string { return this.SERVER_URL + '/api/groups'; }
+  public static get POINT_URL(): string { return this.SERVER_URL + '/api/points'; }
+  public static get POINTRELATION_URL(): string { return this.SERVER_URL + '/api/pointRelations'; }
 
   public static get LOGIN_URL(): string { return '/login'; }
   public static get LOGOUT_URL(): string { return '/logout'; }
@@ -21,6 +23,9 @@ export class AppConfig {
   public static get STUDENTS_URL(): string { return '/students'; }
   public static get COUNT_URL(): string { return '/count'; }
   public static get GROUPS_URL(): string { return '/groups'; }
+  public static get POINTS_URL(): string { return '/points'; }
+  public static get POINTSRELATION_URL(): string { return '/pointRelations'; }
+  
 
   public static get AUTH_HEADER(): string { return 'Authorization'; }
 
