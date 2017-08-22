@@ -4,7 +4,9 @@ import { Observable } from 'rxjs/Observable';
 
 import { UtilsService } from './utils.service';
 import { AvatarService } from './avatar.service';
+import { AppConfig } from '../app/app.config';
 import { Profile } from '../model/profile';
+import { Student } from '../model/student';
 import { Role } from '../model/role';
 import { Avatar } from '../model/avatar';
 
@@ -52,6 +54,33 @@ export class UserService {
 
     return this.http.get(url, options)
       .map((response: Response, index: number) => Profile.toObject(response.json()))
+      .catch((error: Response) => this.utilsService.handleAPIError(error));
+  }
+
+  public getStudentName(id: number): Observable<Student> {  
+
+    let options: RequestOptions = new RequestOptions({
+      headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
+    });
+
+    var url: string = this.utilsService.getMyUrl();
+
+    return this.http.get(url, options)
+      .map((response: Response, index: number) => Student.toObject(response.json()))
+      .catch((error: Response) => this.utilsService.handleAPIError(error));
+  }
+
+  public getStudentName2(id: number): Observable<Student> {  
+
+    let options: RequestOptions = new RequestOptions({
+      headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
+    });
+
+    var url: string = this.utilsService.getMyUrl();
+    
+
+    return this.http.get(AppConfig.STUDENT_URL + '/' + id, options)
+      .map((response: Response, index: number) => Student.toObject(response.json()))
       .catch((error: Response) => this.utilsService.handleAPIError(error));
   }
 

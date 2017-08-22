@@ -7,19 +7,26 @@ import { IonicService } from '../../providers/ionic.service';
 import { UtilsService } from '../../providers/utils.service';
 import { SchoolService } from '../../providers/school.service';
 import { PointService } from '../../providers/point.service';
+import { BadgeService } from '../../providers/badge.service';
 import { GroupService } from '../../providers/group.service';
+import { PointRelationService } from '../../providers/pointRelation.service';
+import { BadgeRelationService } from '../../providers/badgeRelation.service';
 import { Role } from '../../model/role';
 import { Group } from '../../model/group';
 import { Teacher } from '../../model/teacher';
 import { Student } from '../../model/student';
 import { School } from '../../model/school';
 import { Point } from '../../model/point';
+import { Badge } from '../../model/badge';
 import { SchoolPage } from '../../pages/school/school';
 import { PopoverPage } from '../../pages/home/popover/popover';
 import { TeachersPage } from '../../pages/teachers/teachers';
 import { StudentsPage } from '../../pages/students/students';
 import { GroupPage } from '../../pages/group/group';
 import { PointsPage } from '../../pages/points/points';
+import { PointRelation } from '../../model/pointRelation';
+import { BadgesPage } from '../../pages/badges/badges';
+import { BadgeRelation } from '../../model/badgeRelation';
 
 @Component({
   selector: 'page-home',
@@ -31,7 +38,20 @@ export class HomePage {
   public teachersCount: number;
   public studentsCount: number;
   public pointsCount: number;
+  public badgesCount: number;
   public groups: Array<Group>;
+  public pointRelation: PointRelation = new PointRelation();
+  public pointRelations: Array<PointRelation>;
+  public pointRelationTotal: number;
+  public badgeRelation: BadgeRelation = new BadgeRelation();
+  public badgeRelations: Array<BadgeRelation>;
+  public badgeRelationTotal: number;
+  
+  
+  public studentsPoint = false;
+  public groupCheckbox = false;
+  public studentsBadge = false;
+  public groupCheckbox2 = false;
 
   public myRole: Role;
   public role = Role;
@@ -42,6 +62,9 @@ export class HomePage {
     public groupService: GroupService,
     public schoolService: SchoolService,
     public pointService: PointService,
+    public badgeService: BadgeService,
+    public pointRelationService: PointRelationService,
+    public badgeRelationService: BadgeRelationService,
     public platform: Platform,
     public translateService: TranslateService,
     public popoverController: PopoverController,
@@ -63,11 +86,18 @@ export class HomePage {
     this.getHomeInfo();
   }
 
-  /**
+    /**
    * GetPointsPage
    */
   public getPoints(): void {    
     this.navController.push(PointsPage)
+  }
+  
+  /**
+   * GetPointsPage
+   */
+  public getBadges(): void {    
+    this.navController.push(BadgesPage)
   }
 
   /**
@@ -96,6 +126,10 @@ export class HomePage {
 			  this.schoolService.getMySchoolPointsCount().subscribe(
 				((value: number) => {
 				  this.pointsCount = value;
+
+         this.schoolService.getMySchoolBadgesCount().subscribe(
+				((value: number) => {
+				  this.badgesCount = value;
 				
 				this.schoolService.getMySchoolStudentsCount().subscribe(
 					((value: number) => this.studentsCount = value),
@@ -104,8 +138,10 @@ export class HomePage {
 				error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
 			}),
 			error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
-        }),
-        error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
+    }),
+    error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
+    }),
+    error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
 
     } else if (this.myRole === Role.TEACHER) {
 
@@ -120,12 +156,18 @@ export class HomePage {
 				((value: number) => {
 				  this.pointsCount = value;
 
+          this.schoolService.getMySchoolBadgesCount().subscribe(
+				((value: number) => {
+				  this.badgesCount = value;
+
 			  this.groupService.getMyGroups().subscribe(
 				((value: Array<Group>) => this.groups = value),
 				error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
-			}),
+			}),      
 			error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
 		}),
+		error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
+    }),
 		error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
 
     } else if (this.myRole === Role.STUDENT) {
@@ -177,7 +219,7 @@ export class HomePage {
       });
   }
 
-/**
+  /**
    * Method called from the home page to open the list of the
    * points of the school of the current user
    */
@@ -187,6 +229,22 @@ export class HomePage {
 
     this.schoolService.getMySchoolPoints().subscribe(
       ((value: Array<Point>) => this.navController.push(PointsPage, { points: value})),
+      error => {
+        this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error);
+        this.ionicService.removeLoading();
+      });
+  }
+
+  /**
+   * Method called from the home page to open the list of the
+   * points of the school of the current user
+   */
+  public goToBadges(): void {
+
+    this.ionicService.showLoading(this.translateService.instant('APP.WAIT'));
+
+    this.schoolService.getMySchoolBadges().subscribe(
+      ((value: Array<Badge>) => this.navController.push(BadgesPage, { badges: value})),
       error => {
         this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error);
         this.ionicService.removeLoading();
@@ -251,6 +309,52 @@ export class HomePage {
         this.ionicService.removeLoading();
       });
   }
+
+  private getPointsStudent(group: Group): void {
+     this.studentsPoint=true
+     this.studentsBadge=false 
+    this.pointRelationService.getMyStudentPoints1(group.id).finally(() => { }).subscribe(
+      ((value: Array<PointRelation>) => {this.pointRelations = value
+        this.pointRelationTotal = 0         
+        value.forEach(pointRelation=> {
+          this.pointRelationTotal = this.pointRelationTotal+(pointRelation.value*pointRelation.point.value)
+        });
+      }),            
+      error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
+  }
+
+  private getBadgesStudent(group: Group): void {
+    this.studentsBadge=true
+    this.studentsPoint=false
+    this.badgeRelationService.getMyStudentBadges1(group.id).finally(() => { }).subscribe(
+      ((value: Array<BadgeRelation>) => {this.badgeRelations = value
+        this.badgeRelationTotal = 0         
+        value.forEach(badgeRelation=> {
+          this.badgeRelationTotal = this.badgeRelationTotal+(badgeRelation.value*badgeRelation.badge.value)
+        });
+      }),            
+      error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
+  } 
+
+
+  private getGroupsCheckBox(): void { 
+    this.groupCheckbox=true
+    this.groupCheckbox2=false
+    this.studentsBadge=false   
+  }
+   private getGroupsCheckBox2(): void {     
+    this.groupCheckbox2=true
+    this.groupCheckbox=false
+    this.studentsPoint=false
+  }
+  private ocultarCheckBox(): void { 
+    this.groupCheckbox=false
+    this.groupCheckbox2=false     
+    this.studentsPoint=false
+    this.studentsBadge=false
+  }
+
+
 
   /**
    * Thi method presents the more popover on the home

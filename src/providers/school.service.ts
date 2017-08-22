@@ -12,6 +12,7 @@ import { Avatar } from '../model/avatar';
 import { Teacher } from '../model/teacher';
 import { Student } from '../model/student';
 import { Point } from '../model/point';
+import { Badge } from '../model/badge';
 import { Grade } from '../model/grade';
 import { Matter } from '../model/matter';
 
@@ -21,7 +22,7 @@ export class SchoolService {
   constructor(
     public http: Http,
     public utilsService: UtilsService,
-	public gradeService: GradeService,
+	  public gradeService: GradeService,
     public matterService: MatterService) { }
 
   /**
@@ -152,13 +153,24 @@ export class SchoolService {
       .map((response: Response, index: number) => Point.toObjectArray(response.json()))
   }
 
-/**
-   * This method returns the list of students in the school of the
-   * current logged in user
-   * @return {Teachers} returns an array of teachers
+  /**
+   * Returns the list of students by a group id.
+   * @return {Array<Badge>} returns the list of points
    */
-  
-  
+   public getMySchoolBadges(): Observable<Array<Badge>> {     
+
+    let options: RequestOptions = new RequestOptions({
+      headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
+    });
+
+    var url: string = this.utilsService.getMySchoolUrl() + AppConfig.BADGES_URL;   
+
+    return this.http.get(url, options)
+      .map((response: Response, index: number) => Badge.toObjectArray(response.json()))
+  }
+
+
+
   private getPoints(): Observable<Array<Point>> {
 
     let options: RequestOptions = new RequestOptions({
@@ -185,6 +197,38 @@ export class SchoolService {
     });
 
     var url: string = this.utilsService.getMySchoolUrl() + AppConfig.POINTS_URL + AppConfig.COUNT_URL;
+
+    return this.http.get(url, options)
+      .map((response: Response, index: number) => response.json().count)
+      .catch((error: Response) => this.utilsService.handleAPIError(error));
+  }
+
+  private getBadges(): Observable<Array<Badge>> {
+
+    let options: RequestOptions = new RequestOptions({
+      headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
+    });
+
+    var count: number = 0;
+    var url: string = this.utilsService.getMyUrl() + AppConfig.BADGES_URL;
+
+    return this.http.get(url, options)
+      .map((response: Response, index: number) => Badge.toObjectArray(response.json()))
+  }
+  
+
+  /**
+   * This method returns the amount of teachers in the school of the
+   * current logged in user
+   * @return {Teachers} returns the number of teachers
+   */
+  public getMySchoolBadgesCount(): Observable<number> {
+
+    let options: RequestOptions = new RequestOptions({
+      headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
+    });
+
+    var url: string = this.utilsService.getMySchoolUrl() + AppConfig.BADGES_URL + AppConfig.COUNT_URL;
 
     return this.http.get(url, options)
       .map((response: Response, index: number) => response.json().count)

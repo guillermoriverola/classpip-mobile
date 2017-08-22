@@ -1,34 +1,34 @@
 import { Student } from './student'
-import { Point } from './point'
+import { Badge } from './badge'
 
-export class PointRelation {
+export class BadgeRelation {
 
   private _id: string;  
   private _value: number;  
-  private _pointId: number;
+  private _badgeId: number;
   private _groupId: number;
   private _studentId: number;
   private _schoolId: number;
   private _student: Student;
-  private _point: Point;
+  private _badge: Badge;
   
 
-  constructor(value?: number,  pointId?: number, groupId?: number,  studentId?: number, schoolId?: number) {    
+  constructor(value?: number,  badgeId?: number, groupId?: number,  studentId?: number, schoolId?: number) {    
     this._value = value;    
-    this._pointId = pointId;
+    this._badgeId = badgeId;
 	  this._groupId = groupId;
     this._studentId = studentId;
     this._schoolId = schoolId;      
   }
     
   /* tslint:disable */
-  static toObject(object: any): PointRelation {
+  static toObject(object: any): BadgeRelation {
     /* tslint:enable */
-    let result: PointRelation = new PointRelation();
+    let result: BadgeRelation = new BadgeRelation();
     if (object != null) {
       result.id = object.id;      
       result.value = object.value;      
-      result.pointId = object.pointId;
+      result.badgeId = object.badgeId;
 	    result.groupId = object.groupId;
       result.studentId = object.studentId;
       result.schoolId = object.schoolId;
@@ -37,12 +37,12 @@ export class PointRelation {
   }
 
   /* tslint:disable */
-  static toObjectArray(object: any): Array<PointRelation> {
+  static toObjectArray(object: any): Array<BadgeRelation> {
     /* tslint:enable */
-    let resultArray: Array<PointRelation> = new Array<PointRelation>();
+    let resultArray: Array<BadgeRelation> = new Array<BadgeRelation>();
     if (object != null) {
       for (let i = 0; i < object.length; i++) {
-        resultArray.push(PointRelation.toObject(object[i]));
+        resultArray.push(BadgeRelation.toObject(object[i]));
       }
     }
     return resultArray;
@@ -63,12 +63,12 @@ export class PointRelation {
     this._value = value;
   }
 
-  public get pointId(): number {
-    return this._pointId;
+  public get badgeId(): number {
+    return this._badgeId;
   }
 
-  public set pointId(value: number) {
-    this._pointId = value;
+  public set badgeId(value: number) {
+    this._badgeId = value;
   }
   
   public get groupId(): number {
@@ -103,12 +103,13 @@ export class PointRelation {
     this._student = value;
   }
 
-  public get point(): Point {
-    return this._point;
+  public get badge(): Badge {
+    return this._badge;
   }
 
-  public set point(value: Point) {
-    this._point = value;
+  public set badge(value: Badge) {
+    this._badge = value;
   }
 
 }
+

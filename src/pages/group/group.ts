@@ -14,7 +14,13 @@ import { School } from '../../model/school';
 import { PointRelation } from '../../model/pointRelation';
 import { StudentPage } from '../students/student/student';
 import { PointsPage } from '../points';
+import { BadgesPage } from '../badges';
+import { GroupPointPage } from './groupPoint/groupPoint';
+import { GroupPointCreatePage } from './groupPointCreate/groupPointCreate';
+import { GroupBadgePage } from './groupBadge/groupBadge';
+import { GroupBadgeCreatePage } from './groupBadgeCreate/groupBadgeCreate';
 import { Point } from '../../model/point';
+import { Badge } from '../../model/badge';
 import { Role } from '../../model/role';
 
 
@@ -88,7 +94,7 @@ export class GroupPage {
     this.schoolService.getMySchool().finally(() => {}).subscribe(
 		((value: School) => {
 		  this.school = value
-      this.pointRelation.schoolId = this.school.id
+      /*this.pointRelation.schoolId = this.school.id*/
       this.pointRelation.groupId = this.navParams.data.group.id      
     }))    
   }
@@ -120,14 +126,14 @@ export class GroupPage {
 
   private getPointsEstudent(): void {
     this.getPoints();
-    this.pointRelationService.getMyStudentPoints().finally(() => { }).subscribe(
+    this.pointRelationService.getMyStudentPoints1(this.group.id).finally(() => { }).subscribe(
       ((value: Array<PointRelation>) => this.pointRelations = value),
       error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
     this.studentsPoint=true
   }
   private getPointsGroup(): void {
     this.getPoints();
-    this.pointRelationService.getMyGroupPoints(this.group.id).finally(() => { }).subscribe(
+    this.pointRelationService.getMyGroupStudentPoints(this.group.id).finally(() => { }).subscribe(
       ((value: Array<PointRelation>) => this.pointRelations = value),
       error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
     this.studentsPoint=true
@@ -156,24 +162,27 @@ export class GroupPage {
     this.point = point    
     this.pointDisabled=false
     this.isDisabled=true
-    this.pointRelation.pointId = point.id
+    /*this.pointRelation.pointId = point.id*/
     this.pointRelation.value = point.value    
   }
 
   public selectPoint(point: Point): void {
     this.point = point
   }
-     
 
-  public givePoints(student: Student): void {
-    this.student = student
-    this.pointRelation.studentId = this.student.id
-	  this.pointRelationService.postPointRelation(this.pointRelation).subscribe(
-      response => {
-        this.pointDisabled=true		
-      },
-      error => {        
-        this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error);
-      });     
+  public goTogroupPointCreateDetail(group: Group): void {
+    this.navController.push(GroupPointCreatePage, { group: group })
+  }
+
+  public goTogroupPointDetail(group: Group): void {    
+    this.navController.push(GroupPointPage, { group: group })
+  }
+
+  public goTogroupBadgeCreateDetail(group: Group): void {
+    this.navController.push(GroupBadgeCreatePage, { group: group })
+  }
+
+  public goTogroupBadgeDetail(group: Group): void {    
+    this.navController.push(GroupBadgePage, { group: group })
   }
 }

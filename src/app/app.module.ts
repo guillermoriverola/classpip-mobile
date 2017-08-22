@@ -23,6 +23,12 @@ import { StudentsPage } from '../pages/students/students';
 import { StudentPage } from '../pages/students/student/student';
 import { GroupPage } from '../pages/group/group';
 import { PointsPage } from '../pages/points/points';
+import { GroupPointPage } from '../pages/group/groupPoint/groupPoint';
+import { GroupPointCreatePage } from '../pages/group/groupPointCreate/groupPointCreate';
+import { BadgesPage } from '../pages/badges/badges';
+import { GroupBadgePage } from '../pages/group/groupBadge/groupBadge';
+import { GroupBadgeCreatePage } from '../pages/group/groupBadgeCreate/groupBadgeCreate';
+import { BadgePage } from '../pages/badges/badge/badge'
 import { PointPage } from '../pages/points/point/point';
 
 // pipes
@@ -43,6 +49,8 @@ import { UserService } from '../providers/user.service';
 import { UtilsService } from '../providers/utils.service';
 import { PointService } from '../providers/point.service';
 import { PointRelationService } from '../providers/pointRelation.service';
+import { BadgeService } from '../providers/badge.service';
+import { BadgeRelationService } from '../providers/badgeRelation.service';
 
 // rxjs
 import 'rxjs/add/operator/map';
@@ -75,6 +83,12 @@ export function exportTranslateStaticLoader(http: Http) {
     StudentPage,
     GroupPage,
     PointsPage,
+    BadgesPage,
+    BadgePage,
+    GroupPointPage,
+    GroupPointCreatePage,
+    GroupBadgeCreatePage,
+    GroupBadgePage,
     PointPage,
     // pipes
     OrderByIdPipe,
@@ -107,6 +121,12 @@ export function exportTranslateStaticLoader(http: Http) {
     StudentPage,
     PointsPage,
     PointPage,
+    BadgesPage,
+    BadgePage,
+    GroupPointPage,
+    GroupBadgeCreatePage,
+    GroupBadgePage,
+    GroupPointCreatePage,
     GroupPage
   ],
   providers: [
@@ -121,7 +141,9 @@ export function exportTranslateStaticLoader(http: Http) {
     UserService,
     UtilsService,
     PointService,
-    PointRelationService
+    BadgeService,
+    PointRelationService,
+    BadgeRelationService
   ]
 })
 export class AppModule { }

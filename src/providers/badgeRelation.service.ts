@@ -3,7 +3,7 @@ import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 import { UtilsService } from './utils.service';
-import { PointService } from './point.service';
+import { BadgeService } from './badge.service';
 import { SchoolService } from './school.service';
 import { UserService } from './user.service';
 import { AppConfig } from '../app/app.config';
@@ -12,68 +12,68 @@ import { Role } from '../model/role';
 import { Avatar } from '../model/avatar';
 import { Teacher } from '../model/teacher';
 import { Student } from '../model/student';
-import { Point } from '../model/point';
-import { PointRelation } from '../model/pointRelation';
+import { Badge } from '../model/badge';
+import { BadgeRelation } from '../model/badgeRelation';
 import { Grade } from '../model/grade';
 import { Matter } from '../model/matter';
 
 @Injectable()
-export class PointRelationService {
+export class BadgeRelationService {
 
   constructor(
     public http: Http,
     public utilsService: UtilsService,
     public schoolService: SchoolService,
     public userService: UserService,
-    public pointService: PointService
+    public badgeService: BadgeService
     
     ) { }
 
   /**
    * Returns the list of students by a group id.
-   * @return {Array<PointRelation>} returns the list of points
+   * @return {Array<BadgeRelation>} returns the list of badges
    */
-   public getPointRelation(): Observable<Array<PointRelation>> {     
+   public getBadgeRelation(): Observable<Array<BadgeRelation>> {     
 
     let options: RequestOptions = new RequestOptions({
       headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
     });
 
-    var url: string = this.utilsService.getMySchoolUrl() + AppConfig.POINTSRELATION_URL;   
+    var url: string = this.utilsService.getMySchoolUrl() + AppConfig.BADGESRELATION_URL;   
 
     return this.http.get(url, options)
-      .map((response: Response, index: number) => PointRelation.toObjectArray(response.json()))
+      .map((response: Response, index: number) => BadgeRelation.toObjectArray(response.json()))
   }
 
   /**
-   * This method returns all the relation points of the student in this group
+   * This method returns all the relation badges of the student in this group
    * of the current students logged into the application
-   * @return {Array<PointRelation>} returns the list of groups
+   * @return {Array<BadgeRelation>} returns the list of groups
    */
-  public getMyStudentPoints(): Observable<Array<PointRelation>> {
+  public getMyStudentBadges(): Observable<Array<BadgeRelation>> {
 
     let options: RequestOptions = new RequestOptions({
       headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
     });
 
-    var url: string = this.utilsService.getMyUrl() + AppConfig.POINTSRELATION_URL;   
+    var url: string = this.utilsService.getMyUrl() + AppConfig.BADGESRELATION_URL;   
 
     return this.http.get(url, options)
-      .map((response: Response, index: number) => PointRelation.toObjectArray(response.json()))
+      .map((response: Response, index: number) => BadgeRelation.toObjectArray(response.json()))
   }
 
   
   
    /**
-   * This method returns all the relation points of the student in this group
+   * This method returns all the relation badges of the student in this group
    * of the current students logged into the application
-   * @return {Array<PointRelation>} returns the list of groups
+   * @return {Array<BadgeRelation>} returns the list of groups
    */
-  public getMyStudentPoints1(groupId: string ): Observable<Array<PointRelation>> {
+  public getMyStudentBadges1(groupId: string ): Observable<Array<BadgeRelation>> {
     
-    var ret: Array<PointRelation> = new Array<PointRelation>();
-    var obj: Array<PointRelation> = new Array<PointRelation>();           
-    var count = 0 /* Este contador es para contar las veces que un elemento del array pointRelations no se copia en el array ret*/
+    var ret: Array<BadgeRelation> = new Array<BadgeRelation>();
+    var obj: Array<BadgeRelation> = new Array<BadgeRelation>();           
+    var count = 0 /* Este contador es para contar las veces que un elemento del array badgeRelations no se copia en el array ret*/
     var count2 = 0 /* Este contador es para contar las veces que un elemento del array ret no se copia en el array obj*/
     var count3 = false /* Este contador es para hacer el push del objeto si no se encuentra repetido en el array obj*/
     var count4 = true /* Este contador es para hacer el push del objeto si no se encuentra repetido en el array obj*/ 
@@ -83,28 +83,28 @@ export class PointRelationService {
     var numGroupid = parseFloat(groupId)   
     
     return Observable.create(observer => {
-       this.getMyStudentPoints().subscribe(
-        pointRelations => {
-          pointRelations.sort(function (a, b) {
-            if (a.pointId > b.pointId) {
+       this.getMyStudentBadges().subscribe(
+        badgeRelations => {
+          badgeRelations.sort(function (a, b) {
+            if (a.badgeId > b.badgeId) {
               return -1;
             }
-            if (a.pointId < b.pointId) {
+            if (a.badgeId < b.badgeId) {
               return 1;
             }                          
             return 0;
           });
-          pointRelations.forEach(pointRelation => {          
+          badgeRelations.forEach(badgeRelation => {          
             /*ok*/
-            if (pointRelation.groupId != numGroupid){
+            if (badgeRelation.groupId != numGroupid){
               /*ok*/              
               /* Si no coincide el grupo*/         
               count = count + 1
-              if (ret.length + count === pointRelations.length) {
+              if (ret.length + count === badgeRelations.length) {
                 count3 = true
               }
             }
-            if (pointRelation.groupId == numGroupid){
+            if (badgeRelation.groupId == numGroupid){
               /*ok*/
               /* Si coincide el grupo*/
               if (ret.length > 0){
@@ -115,7 +115,7 @@ export class PointRelationService {
                 count6 = ret.length
                 count7 = 0                 
                 ret.forEach(itemRet =>{                                      
-                  if (itemRet.pointId == pointRelation.pointId){                                                    
+                  if (itemRet.badgeId == badgeRelation.badgeId){                                                    
                     itemRet.value = itemRet.value + 1
                     count2 = count2 + 1
                     count4 = false;
@@ -123,11 +123,11 @@ export class PointRelationService {
                     count7 = count7 + 1                                                            
                     /*OK*/                               
                   }
-                  if (itemRet.pointId != pointRelation.pointId){
+                  if (itemRet.badgeId != badgeRelation.badgeId){
                     count7 = count7 + 1
                     if(count6 === count7){                                       
                       if (count4 = true){
-                        ret.push(pointRelation);
+                        ret.push(badgeRelation);
                         count5 = true                                            
                       }                                          
                     }                                                            
@@ -138,9 +138,9 @@ export class PointRelationService {
               if (ret.length === 0){
                 /*ok*/ 
                 /* El primer valor lo introduce en el array ret por defecto*/
-                ret.push(pointRelation);                    
+                ret.push(badgeRelation);                    
               }              
-              if (ret.length + count + count2 === pointRelations.length) {
+              if (ret.length + count + count2 === badgeRelations.length) {
                 count3 = true
                 /*ko*/
               }
@@ -157,9 +157,9 @@ export class PointRelationService {
                 return 0;
               });
               ret.forEach(itemRet =>{               
-                this.pointService.getPointName(itemRet.pointId).subscribe(            
-                  point => {
-                    itemRet.point = point;
+                this.badgeService.getBadgeName(itemRet.badgeId).subscribe(            
+                  badge => {
+                    itemRet.badge = badge;
                     obj.push(itemRet)
                     if (obj.length === ret.length) {
                       observer.next(obj);
@@ -174,31 +174,31 @@ export class PointRelationService {
   } 
 
   /**
-   * This method returns all the relation points of the student in this group
+   * This method returns all the relation badges of the student in this group
    * of the current students logged into the application
-   * @return {Array<PointRelation>} returns the list of groups
+   * @return {Array<BadgeRelation>} returns the list of groups
    */
-  public getStudentPoints(studentId: string): Observable<Array<PointRelation>> {
+  public getStudentBadges(studentId: string): Observable<Array<BadgeRelation>> {
 
     let options: RequestOptions = new RequestOptions({
       headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
     });
       
-    return this.http.get(AppConfig.STUDENT_URL + '/' + studentId + AppConfig.POINTSRELATION_URL, options)
-      .map((response: Response, index: number) => PointRelation.toObjectArray(response.json()))
+    return this.http.get(AppConfig.STUDENT_URL + '/' + studentId + AppConfig.BADGESRELATION_URL, options)
+      .map((response: Response, index: number) => BadgeRelation.toObjectArray(response.json()))
     
   }
 
   /**
-   * This method returns all the relation points of the student in this group
+   * This method returns all the relation badges of the student in this group
    * of the current students logged into the application
-   * @return {Array<PointRelation>} returns the list of groups
+   * @return {Array<BadgeRelation>} returns the list of groups
    */
-  public getMyStudentPoints2(groupId: string, studentId: string ): Observable<Array<PointRelation>> {
+  public getMyStudentBadges2(groupId: string, studentId: string ): Observable<Array<BadgeRelation>> {
     
-    var ret: Array<PointRelation> = new Array<PointRelation>();
-    var obj: Array<PointRelation> = new Array<PointRelation>();           
-    var count = 0 /* Este contador es para contar las veces que un elemento del array pointRelations no se copia en el array ret*/
+    var ret: Array<BadgeRelation> = new Array<BadgeRelation>();
+    var obj: Array<BadgeRelation> = new Array<BadgeRelation>();           
+    var count = 0 /* Este contador es para contar las veces que un elemento del array badgeRelations no se copia en el array ret*/
     var count2 = 0 /* Este contador es para contar las veces que un elemento del array ret no se copia en el array obj*/
     var count3 = false /* Este contador es para hacer el push del objeto si no se encuentra repetido en el array obj*/
     var count4 = true /* Este contador es para hacer el push del objeto si no se encuentra repetido en el array obj*/ 
@@ -208,28 +208,28 @@ export class PointRelationService {
     var numGroupid = parseFloat(groupId)   
     
     return Observable.create(observer => {
-      this.getStudentPoints(studentId).subscribe(
-        pointRelations => {
-          pointRelations.sort(function (a, b) {
-            if (a.pointId > b.pointId) {
+      this.getStudentBadges(studentId).subscribe(
+        badgeRelations => {
+          badgeRelations.sort(function (a, b) {
+            if (a.badgeId > b.badgeId) {
               return -1;
             }
-            if (a.pointId < b.pointId) {
+            if (a.badgeId < b.badgeId) {
               return 1;
             }                          
             return 0;
           });
-          pointRelations.forEach(pointRelation => {          
+          badgeRelations.forEach(badgeRelation => {          
             /*ok*/
-            if (pointRelation.groupId != numGroupid){
+            if (badgeRelation.groupId != numGroupid){
               /*ok*/              
               /* Si no coincide el grupo*/         
               count = count + 1
-              if (ret.length + count === pointRelations.length) {
+              if (ret.length + count === badgeRelations.length) {
                 count3 = true
               }
             }
-            if (pointRelation.groupId == numGroupid){
+            if (badgeRelation.groupId == numGroupid){
               /*ok*/
               /* Si coincide el grupo*/
               if (ret.length > 0){
@@ -240,7 +240,7 @@ export class PointRelationService {
                 count6 = ret.length
                 count7 = 0                 
                 ret.forEach(itemRet =>{                                      
-                  if (itemRet.pointId == pointRelation.pointId){                                                    
+                  if (itemRet.badgeId == badgeRelation.badgeId){                                                    
                     itemRet.value = itemRet.value + 1
                     count2 = count2 + 1
                     count4 = false;
@@ -248,11 +248,11 @@ export class PointRelationService {
                     count7 = count7 + 1                                                            
                     /*OK*/                               
                   }
-                  if (itemRet.pointId != pointRelation.pointId){
+                  if (itemRet.badgeId != badgeRelation.badgeId){
                     count7 = count7 + 1
                     if(count6 === count7){                                       
                       if (count4 = true){
-                        ret.push(pointRelation);
+                        ret.push(badgeRelation);
                         count5 = true                                            
                       }                                          
                     }                                                            
@@ -263,9 +263,9 @@ export class PointRelationService {
               if (ret.length === 0){
                 /*ok*/ 
                 /* El primer valor lo introduce en el array ret por defecto*/
-                ret.push(pointRelation);                    
+                ret.push(badgeRelation);                    
               }              
-              if (ret.length + count + count2 === pointRelations.length) {
+              if (ret.length + count + count2 === badgeRelations.length) {
                 count3 = true
                 /*ko*/
               }
@@ -282,9 +282,9 @@ export class PointRelationService {
                 return 0;
               });
               ret.forEach(itemRet =>{               
-                this.pointService.getPointName(itemRet.pointId).subscribe(            
-                  point => {
-                    itemRet.point = point;
+                this.badgeService.getBadgeName(itemRet.badgeId).subscribe(            
+                  badge => {
+                    itemRet.badge = badge;
                     obj.push(itemRet)
                     if (obj.length === ret.length) {
                       observer.next(obj);
@@ -299,11 +299,11 @@ export class PointRelationService {
   }
 
   /**Funcion antigua, no se usa*/
-  public getMyStudentPoints3(groupId: string, studentId: string ): Observable<Array<PointRelation>> {
+  public getMyStudentBadges3(groupId: string, studentId: string ): Observable<Array<BadgeRelation>> {
     
-    var ret: Array<PointRelation> = new Array<PointRelation>();
-    var obj: Array<PointRelation> = new Array<PointRelation>();       
-    var count = 0 /* Este contador es para contar las veces que un elemento del array pointRelations no se copia en el array ret*/
+    var ret: Array<BadgeRelation> = new Array<BadgeRelation>();
+    var obj: Array<BadgeRelation> = new Array<BadgeRelation>();       
+    var count = 0 /* Este contador es para contar las veces que un elemento del array badgeRelations no se copia en el array ret*/
     var count2 = 0 /* Este contador es para contar las veces que un elemento del array ret no se copia en el array obj*/
     var count3 = 0 /* Este contador es para hacer el push del objeto si no se encuentra repetido en el array obj*/
     var count4 = 0 /* Este contador es para hacer el push del objeto si no se encuentra repetido en el array obj*/ 
@@ -311,52 +311,52 @@ export class PointRelationService {
     var numStudentid = parseFloat(studentId)
     
     return Observable.create(observer => {
-      this.getStudentPoints(studentId).subscribe(
-        pointRelations => {
-          pointRelations.sort(function (a, b) {
-            if (a.pointId > b.pointId) {
+      this.getStudentBadges(studentId).subscribe(
+        badgeRelations => {
+          badgeRelations.sort(function (a, b) {
+            if (a.badgeId > b.badgeId) {
               return -1;
             }
-            if (a.pointId < b.pointId) {
+            if (a.badgeId < b.badgeId) {
               return 1;
             }                          
             return 0;
           });
-          pointRelations.forEach(pointRelation => {                              
-            if (pointRelation.groupId == numGroupid){
-              if (pointRelations.length == 1){
+          badgeRelations.forEach(badgeRelation => {                              
+            if (badgeRelation.groupId == numGroupid){
+              if (badgeRelations.length == 1){
                 /* El primer valor lo introduce en el array obj por defecto*/
-                this.pointService.getPointName(pointRelation.pointId).subscribe(            
-                    point => {
-                      pointRelation.point = point;
-                      this.userService.getStudentName(pointRelation.studentId).subscribe(
+                this.badgeService.getBadgeName(badgeRelation.badgeId).subscribe(            
+                    badge => {
+                      badgeRelation.badge = badge;
+                      this.userService.getStudentName(badgeRelation.studentId).subscribe(
                         student => {
-                          pointRelation.student = student;
-                          ret.push(pointRelation);
+                          badgeRelation.student = student;
+                          ret.push(badgeRelation);
                           observer.next(ret);
                           observer.complete();
                         }, error => observer.error(error))
                     }, error => observer.error(error))               
               }                        
-              if (pointRelations.length > 1){              
-                  /* Si la longitud del Array pointRelations es mayor que 1, hay 2 o mas puntos */
+              if (badgeRelations.length > 1){              
+                  /* Si la longitud del Array badgeRelations es mayor que 1, hay 2 o mas puntos */
                   if (ret.length == 0){
                     /* El primer valor lo introduce en el array ret por defecto*/
-                    this.pointService.getPointName(pointRelation.pointId).subscribe(            
-                        point => {
-                          pointRelation.point = point;
-                          this.userService.getStudentName(pointRelation.studentId).subscribe(
+                    this.badgeService.getBadgeName(badgeRelation.badgeId).subscribe(            
+                        badge => {
+                          badgeRelation.badge = badge;
+                          this.userService.getStudentName(badgeRelation.studentId).subscribe(
                             student => {
-                              pointRelation.student = student;                            
+                              badgeRelation.student = student;                            
                             }, error => observer.error(error))
                         }, error => observer.error(error))
-                    ret.push(pointRelation);
+                    ret.push(badgeRelation);
                   }
                   /* En el resto de casos, 1 punto en ret como mínimo*/
                   count4 = 0;
                   ret.forEach(itemRet =>{                  
                     count4 = count4 + 1
-                    if (itemRet.pointId == pointRelation.pointId){
+                    if (itemRet.badgeId == badgeRelation.badgeId){
                       if (ret.length ==1){
                         /* solo entra en el caso de que haya 1 punto diferente recorrido */
                         count2 = count2 + 1
@@ -369,18 +369,18 @@ export class PointRelationService {
                       /*OK*/
                       }         
                     }
-                    if (itemRet.pointId != pointRelation.pointId){                    
+                    if (itemRet.badgeId != badgeRelation.badgeId){                    
                         /*OK*/
                         if (count4 === ret.length){                        
-                        ret.push(pointRelation);
+                        ret.push(badgeRelation);
                         count4 = 0
                         }                     
                     }
-                    if (ret.length + count + count2 === pointRelations.length) {
+                    if (ret.length + count + count2 === badgeRelations.length) {
                     ret.forEach(itemRet =>{
-                      this.pointService.getPointName(itemRet.pointId).subscribe(            
-                        point => {
-                          itemRet.point = point;
+                      this.badgeService.getBadgeName(itemRet.badgeId).subscribe(            
+                        badge => {
+                          itemRet.badge = badge;
                           this.userService.getStudentName(itemRet.studentId).subscribe(
                             student => {
                               itemRet.student = student;
@@ -407,11 +407,11 @@ export class PointRelationService {
             else {
               /* Si no coincide el grupo*/         
               count = count + 1
-              if (ret.length + count + count2 === pointRelations.length) {
+              if (ret.length + count + count2 === badgeRelations.length) {
                 ret.forEach(itemRet =>{
-                  this.pointService.getPointName(itemRet.pointId).subscribe(            
-                    point => {
-                      itemRet.point = point;
+                  this.badgeService.getBadgeName(itemRet.badgeId).subscribe(            
+                    badge => {
+                      itemRet.badge = badge;
                       this.userService.getStudentName(itemRet.studentId).subscribe(
                         student => {
                           itemRet.student = student;
@@ -439,31 +439,31 @@ export class PointRelationService {
 
 
   /**
-   * This method returns all the relation points of the student in this group
+   * This method returns all the relation badges of the student in this group
    * of the current students logged into the application
-   * @return {Array<PointRelation>} returns the list of groups
+   * @return {Array<BadgeRelation>} returns the list of groups
    */
-  public getPointPoints(pointId: string): Observable<Array<PointRelation>> {
+  public getBadgeBadges(badgeId: string): Observable<Array<BadgeRelation>> {
 
     let options: RequestOptions = new RequestOptions({
       headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
     });
       
-    return this.http.get(AppConfig.POINT_URL + '/' + pointId + AppConfig.POINTSRELATION_URL, options)
-      .map((response: Response, index: number) => PointRelation.toObjectArray(response.json()))
+    return this.http.get(AppConfig.BADGE_URL + '/' + badgeId + AppConfig.BADGESRELATION_URL, options)
+      .map((response: Response, index: number) => BadgeRelation.toObjectArray(response.json()))
     
   } 
   
   /**
-   * This method returns all the relation points of the student in this group
+   * This method returns all the relation badges of the student in this group
    * of the current students logged into the application
-   * @return {Array<PointRelation>} returns the list of groups
+   * @return {Array<BadgeRelation>} returns the list of groups
    */
-  public getMyPointPoints2(groupId: string, pointId: string ): Observable<Array<PointRelation>> {
+  public getMyBadgeBadges2(groupId: string, badgeId: string ): Observable<Array<BadgeRelation>> {
     
-    var ret: Array<PointRelation> = new Array<PointRelation>();
-    var obj: Array<PointRelation> = new Array<PointRelation>();           
-    var count = 0 /* Este contador es para contar las veces que un elemento del array pointRelations no se copia en el array ret*/
+    var ret: Array<BadgeRelation> = new Array<BadgeRelation>();
+    var obj: Array<BadgeRelation> = new Array<BadgeRelation>();           
+    var count = 0 /* Este contador es para contar las veces que un elemento del array badgeRelations no se copia en el array ret*/
     var count2 = 0 /* Este contador es para contar las veces que un elemento del array ret no se copia en el array obj*/
     var count3 = false /* Este contador es para hacer el push del objeto si no se encuentra repetido en el array obj*/
     var count4 = true /* Este contador es para hacer el push del objeto si no se encuentra repetido en el array obj*/ 
@@ -473,9 +473,9 @@ export class PointRelationService {
     var numGroupid = parseFloat(groupId)
     
     return Observable.create(observer => {
-      this.getPointPoints(pointId).subscribe(
-        pointRelationsPoint => {
-          pointRelationsPoint.sort(function (a, b) {
+      this.getBadgeBadges(badgeId).subscribe(
+        badgeRelationsBadge => {
+          badgeRelationsBadge.sort(function (a, b) {
             if (a.studentId > b.studentId) {
               return -1;
             }
@@ -484,17 +484,17 @@ export class PointRelationService {
             }                          
             return 0;
           });
-          pointRelationsPoint.forEach(pointRelationPoint => {          
+          badgeRelationsBadge.forEach(badgeRelationBadge => {          
             /*ok*/
-            if (pointRelationPoint.groupId != numGroupid){
+            if (badgeRelationBadge.groupId != numGroupid){
               /*ok*/              
               /* Si no coincide el grupo*/         
               count = count + 1
-              if (ret.length + count === pointRelationsPoint.length) {
+              if (ret.length + count === badgeRelationsBadge.length) {
                 count3 = true
               }
             }
-            if (pointRelationPoint.groupId == numGroupid){
+            if (badgeRelationBadge.groupId == numGroupid){
               /*ok*/
               /* Si coincide el grupo*/
               if (ret.length > 0){
@@ -505,7 +505,7 @@ export class PointRelationService {
                 count6 = ret.length
                 count7 = 0                 
                 ret.forEach(itemRet =>{                                      
-                  if (itemRet.studentId == pointRelationPoint.studentId){                                                    
+                  if (itemRet.studentId == badgeRelationBadge.studentId){                                                    
                     itemRet.value = itemRet.value + 1
                     count2 = count2 + 1
                     count4 = false;
@@ -513,11 +513,11 @@ export class PointRelationService {
                     count7 = count7 + 1                                                            
                     /*OK*/                               
                   }
-                  if (itemRet.studentId != pointRelationPoint.studentId){
+                  if (itemRet.studentId != badgeRelationBadge.studentId){
                     count7 = count7 + 1
                     if(count6 === count7){                                       
                       if (count4 = true){
-                        ret.push(pointRelationPoint);
+                        ret.push(badgeRelationBadge);
                         count5 = true                                            
                       }                                          
                     }                                                            
@@ -528,9 +528,9 @@ export class PointRelationService {
               if (ret.length === 0){
                 /*ok*/ 
                 /* El primer valor lo introduce en el array ret por defecto*/
-                ret.push(pointRelationPoint);                    
+                ret.push(badgeRelationBadge);                    
               }              
-              if (ret.length + count + count2 === pointRelationsPoint.length) {
+              if (ret.length + count + count2 === badgeRelationsBadge.length) {
                 count3 = true
                 /*ko*/
               }
@@ -567,48 +567,48 @@ export class PointRelationService {
 
 
   /**
-   * This method returns all the relation points of the student in this group
+   * This method returns all the relation badges of the student in this group
    * of the current students logged into the application
-   * @return {Array<PointRelation>} returns the list of groups
+   * @return {Array<BadgeRelation>} returns the list of groups
    */
-  public getMyGroupPoints(id: string): Observable<Array<PointRelation>> {
+  public getMyGroupBadges(id: string): Observable<Array<BadgeRelation>> {
 
     let options: RequestOptions = new RequestOptions({
       headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
     });
 
     var count: number = 0;
-    var url: string = AppConfig.GROUP_URL + '/' + id + AppConfig.POINTSRELATION_URL;   
+    var url: string = AppConfig.GROUP_URL + '/' + id + AppConfig.BADGESRELATION_URL;   
 
     return this.http.get(url, options)
-      .map((response: Response, index: number) => PointRelation.toObjectArray(response.json()))
+      .map((response: Response, index: number) => BadgeRelation.toObjectArray(response.json()))
   }
 
   /**
-   * This method returns all the relation points of the student in this group
+   * This method returns all the relation badges of the student in this group
    * of the current students logged into the application
-   * @return {Array<PointRelation>} returns the list of groups
+   * @return {Array<BadgeRelation>} returns the list of groups
    */
-  public getMyGroupStudentPoints(id: string /*, studentId: string*/): Observable<Array<PointRelation>> {
+  public getMyGroupStudentBadges(id: string /*, studentId: string*/): Observable<Array<BadgeRelation>> {
     
-    var ret: Array<PointRelation> = new Array<PointRelation>();    
+    var ret: Array<BadgeRelation> = new Array<BadgeRelation>();    
     var count = 0
     var numid = parseFloat(id)
-    var pointt = 100000
+    var badget = 100000
     return Observable.create(observer => {
-      this.getMyGroupPoints(id).subscribe(
-        pointRelations => {
-          pointRelations.forEach(pointRelation => {
-            if (pointRelation.pointId = pointt){
+      this.getMyGroupBadges(id).subscribe(
+        badgeRelations => {
+          badgeRelations.forEach(badgeRelation => {
+            if (badgeRelation.badgeId = badget){
               count = count + 1
-            this.pointService.getPointName(pointRelation.pointId).subscribe(            
-              point => {
-                pointRelation.point = point;              
-                this.userService.getStudentName(pointRelation.studentId).subscribe(
+            this.badgeService.getBadgeName(badgeRelation.badgeId).subscribe(            
+              badge => {
+                badgeRelation.badge = badge;              
+                this.userService.getStudentName(badgeRelation.studentId).subscribe(
                   student => {
-                    pointRelation.student = student;
-                    ret.push(pointRelation);
-                    if (ret.length === pointRelations.length) {
+                    badgeRelation.student = student;
+                    ret.push(badgeRelation);
+                    if (ret.length === badgeRelations.length) {
                       observer.next(ret);
                       observer.complete();
                     }
@@ -618,8 +618,8 @@ export class PointRelationService {
             else{
               ret.splice(count,1);              
             }
-          /*if (pointRelation.studentId = studentId){
-              ret.push(pointRelation);
+          /*if (badgeRelation.studentId = studentId){
+              ret.push(badgeRelation);
             }
             else {
               observer.next(ret);
@@ -632,36 +632,36 @@ export class PointRelationService {
 
  
   /**
-   * This method calls the REST API for performing a post of pointRelation against
+   * This method calls the REST API for performing a post of badgeRelation against
    * the common services for the application
-   * @param {PointRelation} pointRelation Object with login credentials
-   * @return {Observable<PointRelation>} observable object with the login response
+   * @param {BadgeRelation} badgeRelation Object with login credentials
+   * @return {Observable<BadgeRelation>} observable object with the login response
    */
 
-  public toObject(pointRelation: PointRelation): PointRelation {
+  public toObject(badgeRelation: BadgeRelation): BadgeRelation {
 
-    let result: PointRelation = new PointRelation();
-    if (pointRelation != null) {
-      result.value = pointRelation.value;      
-      result.pointId = pointRelation.pointId;
-	    result.groupId = pointRelation.groupId;
-      result.studentId = pointRelation.studentId;
-      result.schoolId = pointRelation.schoolId;
+    let result: BadgeRelation = new BadgeRelation();
+    if (badgeRelation != null) {
+      result.value = badgeRelation.value;      
+      result.badgeId = badgeRelation.badgeId;
+	    result.groupId = badgeRelation.groupId;
+      result.studentId = badgeRelation.studentId;
+      result.schoolId = badgeRelation.schoolId;
     }
     return result;
   }
   
-  public postPointRelation(pointId, studentId, schoolId, groupId, value): Observable<Response> {
+  public postBadgeRelation(badgeId, studentId, schoolId, groupId, value): Observable<Response> {
     
     let options: RequestOptions = new RequestOptions({
         headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
       });
     
-    let pointRelation: PointRelation = new PointRelation(value, pointId, groupId, studentId, schoolId);
-    var myObject = this.toObject(pointRelation);
+    let badgeRelation: BadgeRelation = new BadgeRelation(value, badgeId, groupId, studentId, schoolId);
+    var myObject = this.toObject(badgeRelation);
     
     var url: string;
-    url = AppConfig.POINTRELATION_URL;  
+    url = AppConfig.BADGERELATION_URL;  
 
       return this.http.post(url, myObject)
         .map(response => { 

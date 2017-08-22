@@ -8,8 +8,8 @@
 </ion-header>
 <ion-content>
   <button ion-button (click)="getPostPoint()">Crear Puntos</button>
-  <button ion-button *ngIf="isDisabled == true" (click)="getPointsRelation()">Ver puntos asignados</button>
-  <button ion-button *ngIf="isDisabled == false" (click)="getPointsRelation2()">Ocultar puntos asignados</button>
+  <!--<button ion-button *ngIf="isDisabled == true" (click)="getPointsRelation()">Ver puntos asignados</button>
+  <button ion-button *ngIf="isDisabled == false" (click)="getPointsRelation2()">Ocultar puntos asignados</button>-->
   <form (ngSubmit)="postPoint()" #loginForm="ngForm" *ngIf="enablePostPoint == true">
     <ion-list no-lines>
       <ion-item>

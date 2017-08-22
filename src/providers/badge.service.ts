@@ -9,13 +9,13 @@ import { Role } from '../model/role';
 import { Avatar } from '../model/avatar';
 import { Teacher } from '../model/teacher';
 import { Student } from '../model/student';
-import { Point } from '../model/point';
+import { Badge } from '../model/badge';
 import { Grade } from '../model/grade';
 import { Matter } from '../model/matter';
 
 
 @Injectable()
-export class PointService {
+export class BadgeService {
 
   constructor(
     public http: Http,
@@ -28,7 +28,7 @@ export class PointService {
    */
  
 
-  /**public getPoints(): Observable<Array<Point>> {
+  /**public getBadges(): Observable<Array<Badge>> {
 
     var count = 0;   
 
@@ -36,7 +36,7 @@ export class PointService {
       headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
     });
 
-    let url: string = this.utilsService.getMySchoolUrl() + AppConfig.POINTS_URL;
+    let url: string = this.utilsService.getMySchoolUrl() + AppConfig.BADGES_URL;
 
   
 
@@ -48,24 +48,24 @@ export class PointService {
    * of the groups we are querying
    * @return {Grade} grade object with all the information
    */
-  public getPoint(id: number): Observable<Point> {
+  public getBadge(id: number): Observable<Badge> {
 
     let options: RequestOptions = new RequestOptions({
       headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
     });
 
-    return this.http.get(AppConfig.POINTS_URL + '/' + id, options)
-      .map((response: Response, index: number) => Point.toObject(response.json()))
+    return this.http.get(AppConfig.BADGES_URL + '/' + id, options)
+      .map((response: Response, index: number) => Badge.toObject(response.json()))
   }
 
-  public getPointName(id: number): Observable<Point> {
+  public getBadgeName(id: number): Observable<Badge> {
 
     let options: RequestOptions = new RequestOptions({
       headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
     });
 
-    return this.http.get(AppConfig.POINT_URL + '/' + id, options)
-      .map((response: Response, index: number) => Point.toObject(response.json()))
+    return this.http.get(AppConfig.BADGE_URL + '/' + id, options)
+      .map((response: Response, index: number) => Badge.toObject(response.json()))
   }
 
 
@@ -73,37 +73,37 @@ export class PointService {
 
 /**
    * Returns the list of students by a group id.
-   * @return {Array<Point>} returns the list of points
+   * @return {Array<Badge>} returns the list of badges
    */
-   private getMySchoolPoints(): Observable<Array<Point>> {     
+   private getMySchoolBadges(): Observable<Array<Badge>> {     
 
     let options: RequestOptions = new RequestOptions({
       headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
     });
 
-    var url: string = this.utilsService.getMySchoolUrl() + AppConfig.POINTS_URL;   
+    var url: string = this.utilsService.getMySchoolUrl() + AppConfig.BADGES_URL;   
 
     return this.http.get(url, options)
-      .map((response: Response, index: number) => Point.toObjectArray(response.json()))
+      .map((response: Response, index: number) => Badge.toObjectArray(response.json()))
   }
 
 
   /**
-   * This method calls the REST API for performing a post of point against
+   * This method calls the REST API for performing a post of badge against
    * the common services for the application
-   * @param {Point} point Object with login credentials
-   * @return {Observable<Point>} observable object with the login response
+   * @param {Badge} badge Object with login credentials
+   * @return {Observable<Badge>} observable object with the login response
    */
-  public postPoint(point: Point): Observable<Response> {
+  public postBadge(badge: Badge): Observable<Response> {
     
 	let options: RequestOptions = new RequestOptions({
       headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
     });
 	
 	var url: string;
-	url = AppConfig.POINT_URL;  
+	url = AppConfig.BADGE_URL;  
 
-    return this.http.post(url, point)
+    return this.http.post(url, badge)
       .map(response => {        
         return response;
       })
