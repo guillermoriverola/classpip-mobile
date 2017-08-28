@@ -58,6 +58,20 @@ export class BadgeService {
       .map((response: Response, index: number) => Badge.toObject(response.json()))
   }
 
+  
+  
+  public deleteBadge(id: string): Observable<Badge> {
+
+    let options: RequestOptions = new RequestOptions({
+      headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
+    });
+    return this.http.delete(AppConfig.BADGE_URL + '/' + id, options)
+      .map(response => {        
+        return response;
+      })
+      .catch((error: Response) => this.utilsService.handleAPIError(error));
+  }
+
   public getBadgeName(id: number): Observable<Badge> {
 
     let options: RequestOptions = new RequestOptions({

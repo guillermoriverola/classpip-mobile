@@ -4,11 +4,14 @@ import { TranslateService } from 'ng2-translate/ng2-translate';
 
 import { IonicService } from '../../providers/ionic.service';
 import { SchoolService } from '../../providers/school.service';
+import { UtilsService } from '../../providers/utils.service';
 import { PointService } from '../../providers/point.service';
 import { PointRelationService } from '../../providers/pointRelation.service';
 import { PointPage } from './point/point';
 import { Point } from '../../model/point';
 import { PointRelation } from '../../model/pointRelation';
+import { Role } from '../../model/role';
+import { School } from '../../model/school';
 
 @Component({
   selector: 'page-points',
@@ -18,7 +21,7 @@ import { PointRelation } from '../../model/pointRelation';
 export class PointsPage {
 
   public createPoint: Point = new Point();
-
+  public school: School;
   public points: Array<Point>;
   public pointsCount: number;
   public pointRelations: Array<PointRelation>;
@@ -26,11 +29,15 @@ export class PointsPage {
   public isDisabled = true;
   public enablePostPoint = false;
 
+  public myRole: Role;
+  public role = Role;
+
   constructor(
     public navParams: NavParams,
     public navController: NavController,
     public ionicService: IonicService,
     public schoolService: SchoolService,
+    public utilsService: UtilsService,
     public pointService: PointService,
     public pointRelationService: PointRelationService,
     public translateService: TranslateService) {
@@ -44,6 +51,7 @@ export class PointsPage {
     this.createPoint.teacherId = 1000;
 
     this.points = this.navParams.data.points;
+    this.myRole = this.utilsService.role;
   }
 
   /**
@@ -55,6 +63,10 @@ export class PointsPage {
     this.ionicService.removeLoading();
 	this.getPointsCount();
 	this.getPoints();
+  this.schoolService.getMySchool().finally(() => {}).subscribe(
+		((value: School) => {
+		  this.school = value
+    }))
   }
 
   /**
@@ -99,7 +111,7 @@ export class PointsPage {
    * students of the school of the current user
    */
   public goToPointDetail(point: Point): void {
-    this.navController.push(PointPage, { point: Point })
+    this.navController.push(PointPage, { point: point })
   }
 
   private postPoint(): void {
@@ -110,6 +122,15 @@ export class PointsPage {
       error => {        
         this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error);
       });     
+  }
+
+  private deletePoint(): void{
+    this.pointRelationService.deletePointRelationsSchool(this.school.id).subscribe(
+    response => {                       		
+    },
+    error => {        
+      this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error);
+    });
   }
   
 }

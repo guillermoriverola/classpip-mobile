@@ -452,7 +452,32 @@ export class BadgeRelationService {
     return this.http.get(AppConfig.BADGE_URL + '/' + badgeId + AppConfig.BADGESRELATION_URL, options)
       .map((response: Response, index: number) => BadgeRelation.toObjectArray(response.json()))
     
-  } 
+  }
+  
+
+  public deleteBadgeRelations(id: string): Observable<Badge> {
+    let options: RequestOptions = new RequestOptions({
+      headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
+    });  
+   
+    return this.http.delete(AppConfig.BADGE_URL + '/' + id + AppConfig.BADGESRELATION_URL, options)
+      .map(response => {        
+        return response;
+      })
+      .catch((error: Response) => this.utilsService.handleAPIError(error));
+  }
+
+  public deleteBadgeRelationsSchool(id: string): Observable<Badge> {
+    let options: RequestOptions = new RequestOptions({
+      headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
+    });  
+   
+    return this.http.delete(AppConfig.SCHOOL_URL + '/' + id + AppConfig.BADGESRELATION_URL, options)
+      .map(response => {        
+        return response;
+      })
+      .catch((error: Response) => this.utilsService.handleAPIError(error));
+  }
   
   /**
    * This method returns all the relation badges of the student in this group

@@ -9,19 +9,21 @@ import { UtilsService } from '../../../providers/utils.service';
 import { SchoolService } from '../../../providers/school.service';
 import { GroupService } from '../../../providers/group.service';
 import { BadgeService } from '../../../providers/badge.service';
+import { BadgeRelationService } from '../../../providers/badgeRelation.service';
 import { Role } from '../../../model/role';
 import { Group } from '../../../model/group';
 import { Teacher } from '../../../model/teacher';
 import { Profile } from '../../../model/profile';
 import { School } from '../../../model/school';
-import { SchoolPage } from '../../pages/school/school';
-import { PopoverPage } from '../../pages/home/popover/popover';
-import { TeachersPage } from '../../pages/teachers/teachers';
-import { StudentsPage } from '../../pages/students/students';
-import { GroupPage } from '../../pages/group/group';
-import { BadgesPage } from '../../pages/badges/badges';
+import { SchoolPage } from '../../../pages/school/school';
+import { PopoverPage } from '../../../pages/home/popover/popover';
+import { TeachersPage } from '../../../pages/teachers/teachers';
+import { StudentsPage } from '../../../pages/students/students';
+import { GroupPage } from '../../../pages/group/group';
+import { BadgesPage } from '../../../pages/badges/badges';
 
 import { Badge } from '../../../model/badge';
+import { BadgeRelation } from '../../../model/badgeRelation';
 
 @Component({
   selector: 'page-badge',
@@ -36,8 +38,10 @@ export class BadgePage {
   public studentsCount: number;
   public badgesCount: number;
   public groups: Array<Group>;
+  public badgeRelations: Array<BadgeRelation>;
   
-  public isDisabled = true;
+  
+  public isDisabled = false;
   public myRole: Role;
   public role = Role;
   
@@ -47,6 +51,7 @@ export class BadgePage {
     public groupService: GroupService,
     public utilsService: UtilsService,
     public badgeService: BadgeService,
+    public badgeRelationService: BadgeRelationService,
     public schoolService: SchoolService,
     public platform: Platform,
     public translateService: TranslateService,
@@ -66,13 +71,20 @@ export class BadgePage {
    */
   public ionViewDidEnter(): void {
   }
-
   
-
-  public enableEditBadge(badge: Badge): void {
-    this.isDisabled=false 
-  }
-  public editBadge(badge: Badge): void {
-    this.isDisabled=true 
-  }
+  public deleteBadge(id: number): void {     
+    this.badgeRelationService.deleteBadgeRelations(this.badge.id).subscribe(
+    response => {                       		
+    },
+    error => {        
+      this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error);
+    });
+    this.badgeService.deleteBadge(this.badge.id).subscribe(
+    response => {
+      this.isDisabled = true       		
+    },
+    error => {        
+      this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error);
+    });         
+  }  
 }

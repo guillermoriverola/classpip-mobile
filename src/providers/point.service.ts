@@ -109,4 +109,17 @@ export class PointService {
       })
       .catch((error: Response) => this.utilsService.handleAPIError(error));
   }
+
+  
+  public deletePoint(id: string): Observable<Point> {
+    let options: RequestOptions = new RequestOptions({
+      headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
+    });
+    return this.http.delete(AppConfig.POINT_URL + '/' + id, options)
+      .map(response => {        
+        return response;
+      })
+      .catch((error: Response) => this.utilsService.handleAPIError(error));
+  }
+
 }

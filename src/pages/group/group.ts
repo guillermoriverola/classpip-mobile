@@ -131,6 +131,7 @@ export class GroupPage {
       error => this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error));
     this.studentsPoint=true
   }
+  
   private getPointsGroup(): void {
     this.getPoints();
     this.pointRelationService.getMyGroupStudentPoints(this.group.id).finally(() => { }).subscribe(

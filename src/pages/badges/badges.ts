@@ -4,11 +4,14 @@ import { TranslateService } from 'ng2-translate/ng2-translate';
 
 import { IonicService } from '../../providers/ionic.service';
 import { SchoolService } from '../../providers/school.service';
+import { UtilsService } from '../../providers/utils.service';
 import { BadgeService } from '../../providers/badge.service';
 import { BadgeRelationService } from '../../providers/badgeRelation.service';
 import { BadgePage } from './badge/badge';
 import { Badge } from '../../model/badge';
+import { School } from '../../model/school';
 import { BadgeRelation } from '../../model/badgeRelation';
+import { Role } from '../../model/role';
 
 @Component({
   selector: 'page-badges',
@@ -18,7 +21,7 @@ import { BadgeRelation } from '../../model/badgeRelation';
 export class BadgesPage {
 
   public createBadge: Badge = new Badge();
-
+  public school: School;
   public badges: Array<Badge>;
   public badgesCount: number;
   public badgeRelations: Array<BadgeRelation>;
@@ -26,11 +29,16 @@ export class BadgesPage {
   public isDisabled = true;
   public enablePostBadge = false;
 
+  public myRole: Role;
+  public role = Role;
+
+
   constructor(
     public navParams: NavParams,
     public navController: NavController,
     public ionicService: IonicService,
     public schoolService: SchoolService,
+    public utilsService: UtilsService,
     public badgeService: BadgeService,
     public badgeRelationService: BadgeRelationService,
     public translateService: TranslateService) {
@@ -44,6 +52,7 @@ export class BadgesPage {
     this.createBadge.teacherId = 1000;
 
     this.badges = this.navParams.data.badges;
+    this.myRole = this.utilsService.role;
   }
 
   /**
@@ -55,6 +64,10 @@ export class BadgesPage {
     this.ionicService.removeLoading();
 	this.getBadgesCount();
 	this.getBadges();
+  this.schoolService.getMySchool().finally(() => {}).subscribe(
+		((value: School) => {
+		  this.school = value
+    })) 
   }
 
   /**
@@ -99,7 +112,7 @@ export class BadgesPage {
    * students of the school of the current user
    */
   public goToBadgeDetail(badge: Badge): void {
-    this.navController.push(BadgePage, { badge: Badge })
+    this.navController.push(BadgePage, { badge: badge })
   }
 
   private postBadge(): void {
@@ -110,6 +123,15 @@ export class BadgesPage {
       error => {        
         this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error);
       });     
+  }
+
+  private deleteBadge(): void{
+    this.badgeRelationService.deleteBadgeRelationsSchool(this.school.id).subscribe(
+    response => {                       		
+    },
+    error => {        
+      this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error);
+    });
   }
   
 }

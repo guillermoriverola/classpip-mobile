@@ -9,17 +9,18 @@ import { UtilsService } from '../../../providers/utils.service';
 import { SchoolService } from '../../../providers/school.service';
 import { GroupService } from '../../../providers/group.service';
 import { PointService } from '../../../providers/point.service';
+import { PointRelationService } from '../../../providers/pointRelation.service';
 import { Role } from '../../../model/role';
 import { Group } from '../../../model/group';
 import { Teacher } from '../../../model/teacher';
 import { Profile } from '../../../model/profile';
 import { School } from '../../../model/school';
 import { SchoolPage } from '../../pages/school/school';
-import { PopoverPage } from '../../pages/home/popover/popover';
-import { TeachersPage } from '../../pages/teachers/teachers';
-import { StudentsPage } from '../../pages/students/students';
-import { GroupPage } from '../../pages/group/group';
-import { PointsPage } from '../../pages/points/points';
+import { PopoverPage } from '../../../pages/home/popover/popover';
+import { TeachersPage } from '../../../pages/teachers/teachers';
+import { StudentsPage } from '../../../pages/students/students';
+import { GroupPage } from '../../../pages/group/group';
+import { PointsPage } from '../../../pages/points/points';
 
 import { Point } from '../../../model/point';
 
@@ -37,7 +38,7 @@ export class PointPage {
   public pointsCount: number;
   public groups: Array<Group>;
   
-  public isDisabled = true;
+  public isDisabled = false;
   public myRole: Role;
   public role = Role;
   
@@ -47,6 +48,7 @@ export class PointPage {
     public groupService: GroupService,
     public utilsService: UtilsService,
     public pointService: PointService,
+    public pointRelationService: PointRelationService,
     public schoolService: SchoolService,
     public platform: Platform,
     public translateService: TranslateService,
@@ -69,8 +71,20 @@ export class PointPage {
 
   
 
-  public enableEditPoint(point: Point): void {
-    this.isDisabled=false 
+  public deletePoint(point: Point): void {
+    this.pointRelationService.deletePointRelations(this.point.id).subscribe(
+      response => {                       		
+      },
+      error => {        
+        this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error);
+      });
+    this.pointService.deletePoint(this.point.id).subscribe(
+      response => {
+       this.isDisabled = true
+      },
+      error => {        
+        this.ionicService.showAlert(this.translateService.instant('APP.ERROR'), error);
+      });      
   }
   public editPoint(point: Point): void {
     this.isDisabled=true 

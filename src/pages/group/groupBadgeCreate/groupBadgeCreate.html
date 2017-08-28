@@ -7,11 +7,11 @@
   </ion-navbar>
 </ion-header>
 <ion-content>
-  <h3 text-center>Selecciona el alumno y el punto</h3>  
+  <h3 text-center>Selecciona el alumno y la insignia</h3>  
 <h2></h2>
 <ion-row>
   <ion-col  width-33>
-    <h3 text-center>Puntos:</h3>   
+    <h3 text-center>Insignias:</h3>   
     <ion-list *ngIf="isDisabledBadge == false">      
       <ion-item *ngFor="let badge of badges | orderByIdPipe; let i=index">
         <ion-label>{{badge.name}}</ion-label>
@@ -29,7 +29,7 @@
     </ion-list>
   </ion-col>
   <ion-col >
-      <h3 text-center>Punto:</h3>      
+      <h3 text-center>Insignia:</h3>      
       <ion-item *ngIf="badgeCreate == true">
         <h2>{{badge.name}}</h2>
       </ion-item>

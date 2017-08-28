@@ -670,6 +670,30 @@ export class PointRelationService {
         .catch((error: Response) => this.utilsService.handleAPIError(error));
   }
 
+  public deletePointRelations(id: string): Observable<Point> {
+    let options: RequestOptions = new RequestOptions({
+      headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
+    });  
+   
+    return this.http.delete(AppConfig.POINT_URL + '/' + id + AppConfig.POINTSRELATION_URL, options)
+      .map(response => {        
+        return response;
+      })
+      .catch((error: Response) => this.utilsService.handleAPIError(error));
+  }
+
+  public deletePointRelationsSchool(id: string): Observable<Point> {
+    let options: RequestOptions = new RequestOptions({
+      headers: this.utilsService.setAuthorizationHeader(new Headers(), this.utilsService.currentUser.id)
+    });  
+   
+    return this.http.delete(AppConfig.SCHOOL_URL + '/' + id + AppConfig.POINTSRELATION_URL, options)
+      .map(response => {        
+        return response;
+      })
+      .catch((error: Response) => this.utilsService.handleAPIError(error));
+  }
+
 
 
 }

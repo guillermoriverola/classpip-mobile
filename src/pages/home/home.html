@@ -135,7 +135,14 @@
     </ion-item>
      <!-- points -->
     <ion-item *ngIf="pointsCount" (click)="goToPoints()">
-      {{ 'HOME.POINTS' | translate }} ({{ pointsCount }})
+      Puntos({{ pointsCount }})
+      <button ion-button clear item-right icon-only>
+        <ion-icon name="ios-arrow-forward"></ion-icon>
+      </button>
+    </ion-item>
+    <!-- badges -->
+    <ion-item *ngIf="badgesCount" (click)="goToBadges()">
+      Insignias({{ badgesCount }})
       <button ion-button clear item-right icon-only>
         <ion-icon name="ios-arrow-forward"></ion-icon>
       </button>
